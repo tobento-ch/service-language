@@ -50,8 +50,8 @@ composer require tobento/service-language
 Easily create a language with the provided factory:
 
 ```php
-use \Tobento\Service\Language\LanguageFactory;
-use \Tobento\Service\Language\LanguageInterface;
+use Tobento\Service\Language\LanguageFactory;
+use Tobento\Service\Language\LanguageInterface;
 
 $languageFactory = new LanguageFactory();
 
@@ -64,7 +64,7 @@ var_dump($language instanceof LanguageInterface);
 **Parameters:**
 
 ```php
-use \Tobento\Service\Language\LanguageFactory;
+use Tobento\Service\Language\LanguageFactory;
 
 $languageFactory = new LanguageFactory();
 
@@ -89,8 +89,8 @@ $language = $languageFactory->createLanguage(
 ### Language Interface
 
 ```php
-use \Tobento\Service\Language\LanguageFactory;
-use \Tobento\Service\Language\LanguageInterface;
+use Tobento\Service\Language\LanguageFactory;
+use Tobento\Service\Language\LanguageInterface;
 
 $languageFactory = new LanguageFactory();
 
@@ -147,9 +147,9 @@ var_dump($language->active());
 ### Create Languages
 
 ```php
-use \Tobento\Service\Language\LanguageFactory;
-use \Tobento\Service\Language\Languages;
-use \Tobento\Service\Language\LanguagesInterface;
+use Tobento\Service\Language\LanguageFactory;
+use Tobento\Service\Language\Languages;
+use Tobento\Service\Language\LanguagesInterface;
 
 $languageFactory = new LanguageFactory();
 
@@ -168,9 +168,9 @@ var_dump($languages instanceof LanguagesInterface);
 **Create languages from an array:**
 
 ```php
-use \Tobento\Service\Language\LanguageFactory;
-use \Tobento\Service\Language\Languages;
-use \Tobento\Service\Language\LanguagesInterface;
+use Tobento\Service\Language\LanguageFactory;
+use Tobento\Service\Language\Languages;
+use Tobento\Service\Language\LanguagesInterface;
 
 $languageFactory = new LanguageFactory();
 
@@ -189,7 +189,7 @@ var_dump($languages instanceof LanguagesInterface);
 ### Get Language
 
 ```php
-use \Tobento\Service\Language\LanguageInterface;
+use Tobento\Service\Language\LanguageInterface;
 
 $language = $languages->get('de-CH'); // supports locale, id, key or slug values.
 
@@ -200,9 +200,9 @@ var_dump($language instanceof LanguageInterface);
 If the language is inactive, it will return the fallback language and if the language does not exist it will return the default language:
 
 ```php
-use \Tobento\Service\Language\LanguageFactory;
-use \Tobento\Service\Language\Languages;
-use \Tobento\Service\Language\LanguagesInterface;
+use Tobento\Service\Language\LanguageFactory;
+use Tobento\Service\Language\Languages;
+use Tobento\Service\Language\LanguagesInterface;
 
 $languageFactory = new LanguageFactory();
 
@@ -244,7 +244,7 @@ var_dump($languages->has('fr', activeOnly: false));
 ### Default Language
 
 ```php
-use \Tobento\Service\Language\LanguageInterface;
+use Tobento\Service\Language\LanguageInterface;
 
 $defaultLanguage = $languages->default();
 
@@ -412,10 +412,10 @@ var_dump($fallbackLanguage instanceof LanguageInterface);
 **Create area languages**
 
 ```php
-use \Tobento\Service\Language\LanguageFactory;
-use \Tobento\Service\Language\AreaLanguages;
-use \Tobento\Service\Language\AreaLanguagesInterface;
-use \Tobento\Service\Language\LanguagesFactoryInterface;
+use Tobento\Service\Language\LanguageFactory;
+use Tobento\Service\Language\AreaLanguages;
+use Tobento\Service\Language\AreaLanguagesInterface;
+use Tobento\Service\Language\LanguagesFactoryInterface;
 
 $languageFactory = new LanguageFactory();
 
@@ -435,7 +435,7 @@ var_dump($areaLanguages instanceof AreaLanguagesInterface);
 **get / has**
 
 ```php
-use \Tobento\Service\Language\LanguagesInterface;
+use Tobento\Service\Language\LanguagesInterface;
 
 $frontendLanguages = $areaLanguages->get('frontend');
 
@@ -455,9 +455,9 @@ var_dump($areaLanguages->has('frontend'));
 You might want to use the current language resolver to set the current language. You might also write your own resolver depending on your needs such as a CurrentLanguageSessionResolver, CurrentLanguageServerRequestResolver and so on.
 
 ```php
-use \Tobento\Service\Language\LanguageFactory;
-use \Tobento\Service\Language\Languages;
-use \Tobento\Service\Language\LanguagesInterface;
+use Tobento\Service\Language\LanguageFactory;
+use Tobento\Service\Language\Languages;
+use Tobento\Service\Language\LanguagesInterface;
 use Tobento\Service\Language\CurrentLanguageResolver;
 use Tobento\Service\Language\CurrentLanguageResolverInterface;
 use Tobento\Service\Language\CurrentLanguageResolverException;
