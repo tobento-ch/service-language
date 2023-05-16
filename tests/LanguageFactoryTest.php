@@ -47,12 +47,15 @@ class LanguageFactoryTest extends TestCase
             region: 'CH',
             slug: 'de-ch',
             directory: 'dech',
+            direction: 'rtl',
             area: 'front',
             domain: 'example.de',
             url: 'https://eaxmple.com',
             fallback: 'en',
             default: true,
             active: false,
+            editable: false,
+            order: 2,
         );
         
         $this->assertSame(
@@ -65,12 +68,15 @@ class LanguageFactoryTest extends TestCase
                 'CH',
                 'de-ch',
                 'dech',
+                'rtl',
                 'front',
                 'example.de',
                 'https://eaxmple.com',
                 'en',
                 true,
                 false,
+                false,
+                2,
             ],
             [
                 $language->locale(),
@@ -81,12 +87,15 @@ class LanguageFactoryTest extends TestCase
                 $language->region(),
                 $language->slug(),
                 $language->directory(),
+                $language->direction(),
                 $language->area(),
                 $language->domain(),
                 $language->url(),
                 $language->fallback(),
                 $language->default(),
                 $language->active(),
+                $language->editable(),
+                $language->order(),
             ]
         );
     }
@@ -105,12 +114,15 @@ class LanguageFactoryTest extends TestCase
                 'region' => 'CH',
                 'slug' => 'de-ch',
                 'directory' => 'dech',
+                'direction' => 'rtl',
                 'area' => 'front',
                 'domain' => 'example.de',
                 'url' => 'https://eaxmple.com',
                 'fallback' => 'en',
                 'default' => true,
-                'active' => false,                
+                'active' => false,
+                'editable' => false,
+                'order' => 2,
             ]
         ];
         
@@ -126,12 +138,15 @@ class LanguageFactoryTest extends TestCase
                 'CH',
                 'de-ch',
                 'dech',
+                'rtl',
                 'front',
                 'example.de',
                 'https://eaxmple.com',
                 'en',
                 true,
                 false,
+                false,
+                2,
             ],
             [
                 $language->locale(),
@@ -142,13 +157,16 @@ class LanguageFactoryTest extends TestCase
                 $language->region(),
                 $language->slug(),
                 $language->directory(),
+                $language->direction(),
                 $language->area(),
                 $language->domain(),
                 $language->url(),
                 $language->fallback(),
                 $language->default(),
                 $language->active(),
+                $language->editable(),
+                $language->order(),
             ]
         );
-    }      
+    }
 }
