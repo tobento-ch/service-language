@@ -29,12 +29,15 @@ class Language implements LanguageInterface
      * @param int $id
      * @param string $slug
      * @param string $directory
+     * @param string $direction
      * @param string $area
      * @param null|string $domain
      * @param null|string $url
      * @param null|string $fallback
      * @param bool $default
      * @param bool $active
+     * @param bool $editable
+     * @param int $order
      */
     public function __construct(
         protected string $locale,
@@ -45,12 +48,15 @@ class Language implements LanguageInterface
         protected int $id,
         protected string $slug,
         protected string $directory,
+        protected string $direction,
         protected string $area,
         protected null|string $domain = null,
         protected null|string $url = null,
         protected null|string $fallback = null,
         protected bool $default = false,
         protected bool $active = true,
+        protected bool $editable = true,
+        protected int $order = 0,
     ) {}
         
     /**
@@ -94,6 +100,19 @@ class Language implements LanguageInterface
     }
     
     /**
+     * Returns a new instance with the specified name.
+     *
+     * @param string $name
+     * @return static
+     */
+    public function withName(string $name): static
+    {
+        $new = clone $this;
+        $new->name = $name;
+        return $new;
+    }
+    
+    /**
      * Get the key.
      *
      * @return string
@@ -131,6 +150,16 @@ class Language implements LanguageInterface
     public function directory(): string
     {
         return $this->directory;
+    }
+    
+    /**
+     * Get the direction.
+     *
+     * @return string
+     */
+    public function direction(): string
+    {
+        return $this->direction;
     }
 
     /**
@@ -191,7 +220,27 @@ class Language implements LanguageInterface
     public function active(): bool
     {
         return $this->active;
-    }   
+    }
+    
+    /**
+     * Get editable.
+     *
+     * @return bool
+     */
+    public function editable(): bool
+    {
+        return $this->editable;
+    }
+    
+    /**
+     * Get order.
+     *
+     * @return int
+     */
+    public function order(): int
+    {
+        return $this->order;
+    }
     
     /**
      * __get For array_column object support
