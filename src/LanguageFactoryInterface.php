@@ -29,12 +29,15 @@ interface LanguageFactoryInterface
      * @param null|string $region
      * @param null|string $slug
      * @param null|string $directory
+     * @param string $direction
      * @param string $area
      * @param null|string $domain
      * @param null|string $url
      * @param null|string $fallback
      * @param bool $default
-     * @param bool $active     
+     * @param bool $active
+     * @param bool $editable
+     * @param int $order
      * @return LanguageInterface
      */
     public function createLanguage(
@@ -46,12 +49,15 @@ interface LanguageFactoryInterface
         null|string $region = null,
         null|string $slug = null,
         null|string $directory = null,
+        string $direction = 'ltr',
         string $area = 'default',
         null|string $domain = null,
         null|string $url = null,
         null|string $fallback = null,
         bool $default = false,
         bool $active = true,
+        bool $editable = true,
+        int $order = 0,
     ): LanguageInterface;
     
     /**
