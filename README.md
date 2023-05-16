@@ -19,6 +19,7 @@ The Language Service provides a way for managing languages for PHP applications.
         - [All Languages](#all-languages)
         - [Columns](#columns)
         - [Fallbacks](#fallbacks)
+        - [Miscellaneous Methods](#miscellaneous-methods)
     - [Area Languages](#area-languages)
     - [Current Language Resolver](#current-language-resolver)
 - [Credits](#credits)
@@ -77,12 +78,15 @@ $language = $languageFactory->createLanguage(
     region: 'US',
     slug: 'en',
     directory: 'enUs',
+    direction: 'ltr',
     area: 'frontend',
     domain: 'example.com',
     url: 'https://www.example.com',
     fallback: 'en',
     default: false,
     active: true,
+    editable: true,
+    order: 2,
 );
 ```
 
@@ -123,6 +127,9 @@ var_dump($language->slug());
 var_dump($language->directory());
 // string(5) "en-us"
 
+var_dump($language->direction());
+// string(3) "ltr"
+
 var_dump($language->area());
 // string(7) "default"
 
@@ -140,6 +147,12 @@ var_dump($language->default());
 
 var_dump($language->active());
 // bool(true)
+
+var_dump($language->editable());
+// bool(true)
+
+var_dump($language->order());
+// int(2)
 ```
 
 ## Languages
@@ -281,8 +294,11 @@ use Tobento\Service\Language\LanguageInterface;
 $allLanguages = $languages->all();
 // array<string, LanguageInterface>
 
-// This returns only the active languages.
+// or just
+foreach($languages as $language) {}
 ```
+
+Returns only the active languages!
 
 **Indexed by language parameter:**
 
@@ -405,6 +421,57 @@ $fallbackLanguage = $languages->getFallback('de-CH');
 
 var_dump($fallbackLanguage instanceof LanguageInterface);
 // bool(true)
+```
+
+### Miscellaneous Methods
+
+**first**
+
+```php
+use Tobento\Service\Language\LanguageInterface;
+
+// returns first found active language:
+var_dump($languages->first() instanceof LanguageInterface);
+// bool(true) or NULL
+
+// returns first found language:
+$firstLanguage = $languages->first(activeOnly: false);
+```
+
+**filter**
+
+Filter languages returning a new instance.
+
+```php
+use Tobento\Service\Language\LanguageInterface;
+
+$languagesNew = $languages->filter(
+    fn(LanguageInterface $l): bool => $l->active()
+);
+```
+
+**map**
+
+Map over each of the languages returning a new instance.
+
+```php
+use Tobento\Service\Language\LanguageInterface;
+
+$languagesNew = $languages->map(
+    fn(LanguageInterface $l): LanguageInterface => $l->withName(strtoupper($l->name()))
+);
+```
+
+**sort**
+
+Sort languages returning a new instance.
+
+```php
+use Tobento\Service\Language\LanguageInterface;
+
+$languagesNew = $languages->sort(
+    fn(LanguageInterface $a, LanguageInterface $b) => $a->locale() <=> $b->locale()
+);
 ```
 
 ## Area Languages
