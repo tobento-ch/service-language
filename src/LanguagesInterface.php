@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Tobento\Service\Language;
 
+use IteratorAggregate;
+
 /**
  * LanguagesInterface
  */
-interface LanguagesInterface
+interface LanguagesInterface extends IteratorAggregate
 {
     /**
      * If has language by key.
@@ -62,6 +64,14 @@ interface LanguagesInterface
     public function current(null|string|int $currentLanguageKey = null): LanguageInterface;
     
     /**
+     * Returns the first language.
+     *
+     * @param bool $activeOnly
+     * @return null|LanguageInterface
+     */    
+    public function first(bool $activeOnly = true): null|LanguageInterface;
+    
+    /**
      * Gets all languages.
      *
      * @param string $indexKey The index key such as id, key, locale, slug.
@@ -69,6 +79,30 @@ interface LanguagesInterface
      * @return array The languages.
      */    
     public function all(string $indexKey = 'locale', bool $activeOnly = true): array;
+    
+    /**
+     * Returns a new instance with the filtered languages.
+     *
+     * @param callable $callback
+     * @return static
+     */
+    public function filter(callable $callback): static;
+    
+    /**
+     * Returns a new instance with the mapped languages.
+     *
+     * @param callable $mapper
+     * @return static
+     */
+    public function map(callable $mapper): static;
+    
+    /**
+     * Returns a new instance with the languages sorted.
+     *
+     * @param callable $callback
+     * @return static
+     */
+    public function sort(callable $callback): static;
 
     /**
      * Gets the fallbacks.

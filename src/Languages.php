@@ -13,10 +13,12 @@ declare(strict_types=1);
 
 namespace Tobento\Service\Language;
 
+use Generator;
+
 /**
  * Languages
  */
-class Languages implements LanguagesInterface
+final class Languages implements LanguagesInterface
 {        
     /**
      * @var array<mixed> Holds the languages.
@@ -170,10 +172,29 @@ class Languages implements LanguagesInterface
     }
     
     /**
+     * Returns the first language.
+     *
+     * @param bool $activeOnly
+     * @return null|LanguageInterface
+     */    
+    public function first(bool $activeOnly = true): null|LanguageInterface
+    {
+        $languages = $this->all(activeOnly: $activeOnly);
+        
+        $key = array_key_first($languages);
+        
+        if (is_null($key)) {
+            return null;
+        }
+        
+        return $languages[$key];
+    }
+    
+    /**
      * Gets all languages.
      *
      * @param string $indexKey The index key such as id, key, locale, slug.
-     * @param bool If true returns only active languages, otherwise all.
+     * @param bool $activeOnly If true returns only active languages, otherwise all.
      * @return array The languages.
      */    
     public function all(string $indexKey = 'locale', bool $activeOnly = true): array
@@ -196,6 +217,63 @@ class Languages implements LanguagesInterface
         
         // return and store it for reusage.
         return $this->languages[$indexKey] = $this->reindex($this->languages, $indexKey);
+    }
+    
+    /**
+     * Returns an iterator for the languages.
+     *
+     * @return Generator
+     */
+    public function getIterator(): Generator
+    {
+        foreach($this->all() as $key => $language) {
+            yield $key => $language;
+        }
+    }
+    
+    /**
+     * Returns a new instance with the filtered languages.
+     *
+     * @param callable $callback
+     * @return static
+     */
+    public function filter(callable $callback): static
+    {
+        $filtered = array_filter($this->all(activeOnly: false), $callback);
+        
+        return new static(...$filtered);
+    }
+    
+    /**
+     * Returns a new instance with the mapped languages.
+     *
+     * @param callable $mapper
+     * @return static
+     */
+    public function map(callable $mapper): static
+    {
+        $mapped = [];
+        
+        foreach($this->all(activeOnly: false) as $language) {
+            $mapped[] = $mapper($language);
+        }
+        
+        return new static(...$mapped);
+    }
+    
+    /**
+     * Returns a new instance with the languages sorted.
+     *
+     * @param callable $callback
+     * @return static
+     */
+    public function sort(callable $callback): static
+    {
+        $languages = $this->all(activeOnly: false);
+        
+        usort($languages, $callback);
+        
+        return new static(...$languages);
     }
 
     /**

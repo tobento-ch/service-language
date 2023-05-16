@@ -47,6 +47,14 @@ interface LanguageInterface
     public function name(): string;
     
     /**
+     * Returns a new instance with the specified name.
+     *
+     * @param string $name
+     * @return static
+     */
+    public function withName(string $name): static;
+    
+    /**
      * Get the key.
      *
      * @return string
@@ -73,6 +81,13 @@ interface LanguageInterface
      * @return string
      */
     public function directory(): string;
+    
+    /**
+     * Get the direction.
+     *
+     * @return string
+     */
+    public function direction(): string;
 
     /**
      * Get the area.
@@ -115,4 +130,18 @@ interface LanguageInterface
      * @return bool
      */
     public function active(): bool;
+    
+    /**
+     * Get editable.
+     *
+     * @return bool
+     */
+    public function editable(): bool;
+    
+    /**
+     * Get order.
+     *
+     * @return int
+     */
+    public function order(): int;
 }
