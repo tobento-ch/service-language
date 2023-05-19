@@ -44,11 +44,7 @@ class AreaLanguages implements AreaLanguagesInterface
         
         foreach($areas as $area => $languages)
         {
-            try {
-                $this->languages[$area] = $languagesFactory->createLanguages(...$languages);    
-            } catch (LanguageException $e) {
-                throw new LanguageException('No default language found for the '.$area.' area');
-            }
+            $this->languages[$area] = $languagesFactory->createLanguages(...$languages);    
         }
     }
     
