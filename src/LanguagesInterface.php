@@ -52,6 +52,7 @@ interface LanguagesInterface extends IteratorAggregate
      * Gets the default language.
      *
      * @return LanguageInterface
+     * @throws LanguageException If no default language is found.
      */
     public function default(): LanguageInterface;
     
