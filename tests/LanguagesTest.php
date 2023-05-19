@@ -25,18 +25,6 @@ use Tobento\Service\Language\LanguageException;
  */
 class LanguagesTest extends TestCase
 {
-    public function testThrowsLanguageExceptionIfNoDefaultLanguageIsFound()
-    {
-        $this->expectException(LanguageException::class);
-        
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en-US'),
-            $factory->createLanguage('de-CH'),
-        );
-    }
-    
     public function testThatInactiveLanguageCannotBeTheDefault()
     {
         $this->expectException(LanguageException::class);
@@ -47,6 +35,8 @@ class LanguagesTest extends TestCase
             $factory->createLanguage('en-US', active: false, default: true),
             $factory->createLanguage('de-CH'),
         );
+        
+        $languages->default();
     }
     
     public function testGetMethodReturnsLanguage()
@@ -273,6 +263,20 @@ class LanguagesTest extends TestCase
             LanguageInterface::class,
             $languages->default()
         );
+    }
+    
+    public function testDefaultMethodThrowsLanguageExceptionIfNoDefaultLanguageIsFound()
+    {
+        $this->expectException(LanguageException::class);
+        
+        $factory = new LanguageFactory();
+
+        $languages = new Languages(
+            $factory->createLanguage('en-US'),
+            $factory->createLanguage('de-CH'),
+        );
+        
+        $languages->default();
     }
     
     public function testCurrentMethodReturnsDefaultIfNoneIsSet()

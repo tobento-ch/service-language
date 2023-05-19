@@ -18,7 +18,6 @@ use Tobento\Service\Language\LanguageFactory;
 use Tobento\Service\Language\Languages;
 use Tobento\Service\Language\LanguagesInterface;
 use Tobento\Service\Language\LanguageInterface;
-use Tobento\Service\Language\LanguageException;
 use \Tobento\Service\Language\AreaLanguages;
 use \Tobento\Service\Language\AreaLanguagesInterface;
 
@@ -27,21 +26,6 @@ use \Tobento\Service\Language\AreaLanguagesInterface;
  */
 class AreaLanguagesTest extends TestCase
 {
-    public function testThrowsLanguageExceptionIfNoDefaultLanguageIsFound()
-    {
-        $this->expectException(LanguageException::class);
-        
-        $factory = new LanguageFactory();
-
-        $languages = new AreaLanguages(
-            null,
-            $factory->createLanguage('en', area: 'frontend', default: true),
-            $factory->createLanguage('de', area: 'frontend'),
-            $factory->createLanguage('en', area: 'backend'),
-            $factory->createLanguage('de', area: 'backend'), 
-        );
-    }
-    
     public function testGetMethodReturnsLanguagesInstance()
     {        
         $factory = new LanguageFactory();
