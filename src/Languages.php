@@ -142,9 +142,14 @@ final class Languages implements LanguagesInterface
      * Gets the default language.
      *
      * @return LanguageInterface
+     * @throws LanguageException If no default language is found.
      */
     public function default(): LanguageInterface
     {        
+        if (!isset($this->languages['default'])) {
+            throw new LanguageException('No default language found');
+        }
+        
         return $this->languages['default'];
     }
     
@@ -363,8 +368,6 @@ final class Languages implements LanguagesInterface
      *
      * @param LanguageInterface $language
      * @return void
-     *
-     * @throws LanguageException If no default language is found.
      */    
     protected function addLanguages(LanguageInterface ...$languages): void
     {
@@ -382,11 +385,6 @@ final class Languages implements LanguagesInterface
                     $this->languages['default'] = $language;
                 }
             }
-        }
-        
-        if (!isset($this->languages['default']))
-        {
-            throw new LanguageException('No default language found');
         }
     }
     
