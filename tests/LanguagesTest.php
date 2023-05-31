@@ -25,20 +25,6 @@ use Tobento\Service\Language\LanguageException;
  */
 class LanguagesTest extends TestCase
 {
-    public function testThatInactiveLanguageCannotBeTheDefault()
-    {
-        $this->expectException(LanguageException::class);
-        
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en-US', active: false, default: true),
-            $factory->createLanguage('de-CH'),
-        );
-        
-        $languages->default();
-    }
-    
     public function testGetMethodReturnsLanguage()
     {
         $factory = new LanguageFactory();
@@ -53,22 +39,6 @@ class LanguagesTest extends TestCase
             LanguageInterface::class,
             $languages->get('en')
         );     
-    }
-
-    public function testGetMethodReturnsFallbackLanguage()
-    {
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en', default: true),
-            $factory->createLanguage('de', fallback: 'en'),
-            $factory->createLanguage('fr', fallback: 'de', active: false),
-        );
-        
-        $this->assertSame(
-            'de',
-            $languages->get('fr')->locale()
-        );        
     }
     
     public function testGetMethodReturnsDefaultLanguage()
@@ -86,38 +56,6 @@ class LanguagesTest extends TestCase
             $languages->get('it')->locale()
         );        
     }
-    
-    public function testGetMethodReturnsDefaultLanguageIfFallbackLanguageMissing()
-    {
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en', default: true),
-            $factory->createLanguage('de', fallback: 'en'),
-            $factory->createLanguage('fr', fallback: 'it', active: false),
-        );
-        
-        $this->assertSame(
-            'en',
-            $languages->get('fr')->locale()
-        );        
-    }
-    
-    public function testGetMethodReturnsDefaultLanguageIfFallbackLanguageIsInactive()
-    {
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en', default: true),
-            $factory->createLanguage('de', active: false),
-            $factory->createLanguage('fr', fallback: 'de', active: false),
-        );
-        
-        $this->assertSame(
-            'en',
-            $languages->get('fr')->locale()
-        );        
-    }     
     
     public function testGetMethodWithoutFallbackReturnsNullIfLanguageMissing()
     {
@@ -191,23 +129,9 @@ class LanguagesTest extends TestCase
         );
         
         $this->assertTrue($languages->has('de'));
-        $this->assertFalse($languages->has('fr'));
+        $this->assertTrue($languages->has('fr'));
+        $this->assertTrue($languages->has('FR'));
         $this->assertFalse($languages->has('it'));
-    }
-    
-    public function testHasMethodWithInactive()
-    {
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en', default: true),
-            $factory->createLanguage('de', fallback: 'en'),
-            $factory->createLanguage('fr', fallback: 'en', active: false),
-        );
-        
-        $this->assertTrue($languages->has('de', activeOnly: false));
-        $this->assertTrue($languages->has('fr', activeOnly: false));
-        $this->assertFalse($languages->has('it', activeOnly: false));
     }
     
     public function testHasMethodWithId()
@@ -220,7 +144,7 @@ class LanguagesTest extends TestCase
         );
         
         $this->assertTrue($languages->has(1));
-        $this->assertFalse($languages->has(2));
+        $this->assertTrue($languages->has(2));
         $this->assertFalse($languages->has(3));
     }
     
@@ -234,7 +158,9 @@ class LanguagesTest extends TestCase
         );
         
         $this->assertTrue($languages->has('en-us'));
-        $this->assertFalse($languages->has('de-ch'));
+        $this->assertTrue($languages->has('de-ch'));
+        $this->assertTrue($languages->has('De-Ch'));
+        $this->assertFalse($languages->has('de-fr'));
     }
     
     public function testHasMethodWithSlug()
@@ -242,11 +168,12 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', slug: 'en-ch', active: false),
+            $factory->createLanguage('enUS', slug: 'en-us', default: true),
+            $factory->createLanguage('deCH', slug: 'en-ch', active: false),
         );
         
         $this->assertTrue($languages->has('en-us'));
+        $this->assertTrue($languages->has('En-Us'));
         $this->assertFalse($languages->has('de-ch'));
     }
     
@@ -294,7 +221,7 @@ class LanguagesTest extends TestCase
         );
     }
     
-    public function testCurrentMethodSetInactiveCurrentFallbackToDefaultIfNoneIsSet()
+    public function testCurrentMethodSetCurrent()
     {
         $factory = new LanguageFactory();
 
@@ -307,26 +234,7 @@ class LanguagesTest extends TestCase
         $languages->current('fr');
         
         $this->assertSame(
-            'en',
-            $languages->current()->locale()
-        );
-    }
-    
-    public function testCurrentMethodSetInactiveCurrentKeepsOldCurrent()
-    {
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en', default: true),
-            $factory->createLanguage('de'),
-            $factory->createLanguage('fr', active: false),
-        );
-        
-        $languages->current('de');
-        $languages->current('fr');
-        
-        $this->assertSame(
-            'de',
+            'fr',
             $languages->current()->locale()
         );
     }
@@ -373,16 +281,15 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de-ch'),
+            $factory->createLanguage('en-US', key: 'en.us', default: true),
+            $factory->createLanguage('de-CH', key: 'de.ch'),
         );
         
         $languages->current('de-CH');
+        $this->assertSame('de-CH', $languages->current()->locale());
         
-        $this->assertSame(
-            'de-CH',
-            $languages->current()->locale()
-        );
+        $languages->current('de-ch');
+        $this->assertSame('de-CH', $languages->current()->locale());        
     }
     
     public function testCurrentMethodSetCurrentByKey()
@@ -450,32 +357,6 @@ class LanguagesTest extends TestCase
         $this->assertSame($language, $languages->first());
     }
     
-    public function testFirstMethodReturnsOnlyActive()
-    {
-        $factory = new LanguageFactory();
-        
-        $languages = new Languages(
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-        );
-        
-        $this->assertSame('en-US', $languages->first()?->locale());
-    }
-    
-    public function testFirstMethodReturnsActiveIfSpcified()
-    {
-        $factory = new LanguageFactory();
-        
-        $languages = new Languages(
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-        );
-        
-        $this->assertSame('fr-CH', $languages->first(activeOnly: false)?->locale());
-    }
-    
     public function testAllMethod()
     {
         $factory = new LanguageFactory();
@@ -483,15 +364,16 @@ class LanguagesTest extends TestCase
         $languages = new Languages(
             $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
             $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
         );
         
         $all = $languages->all();
         
         $this->assertSame(
             [
-                'en-US' => $all['en-US'],
-                'de-CH' => $all['de-CH'],
+                $all[0],
+                $all[1],
+                $all[2],
             ],
             $all
         );
@@ -504,19 +386,20 @@ class LanguagesTest extends TestCase
         $languages = new Languages(
             $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
             $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
         );
         
         $iterated = [];
         
-        foreach($languages as $locale => $language) {
-            $iterated[$locale] = $language->key();
+        foreach($languages as $language) {
+            $iterated[] = $language->key();
         }
         
         $this->assertSame(
             [
-                'en-US' => 'en_us',
-                'de-CH' => 'de_ch',
+                'en_us',
+                'de_ch',
+                'fr_ch',
             ],
             $iterated
         );
@@ -537,7 +420,71 @@ class LanguagesTest extends TestCase
         );
         
         $this->assertFalse($languages === $languagesNew);
-        $this->assertSame(2, count($languagesNew->all(activeOnly: false)));
+        $this->assertSame(2, count($languagesNew->all()));
+    }
+    
+    public function testActiveMethod()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new Languages(
+            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+        );
+        
+        $languagesNew = $languages->active();
+        
+        $this->assertFalse($languages === $languagesNew);
+        $this->assertSame(['en-US', 'de-CH'], $languagesNew->column('locale'));
+    }
+    
+    public function testActiveMethodWithFalse()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new Languages(
+            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+        );
+        
+        $languagesNew = $languages->active(active: false);
+        
+        $this->assertFalse($languages === $languagesNew);
+        $this->assertSame(['fr-CH'], $languagesNew->column('locale'));
+    }
+    
+    public function testDomainMethod()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new Languages(
+            $factory->createLanguage('en-US', key: 'en_us', default: true),
+            $factory->createLanguage('de-CH', key: 'de_ch', domain: 'example.ch'),
+            $factory->createLanguage('fr-CH', key: 'fr_CH', domain: 'example.ch', active: false),
+        );
+        
+        $languagesNew = $languages->domain('example.ch');
+        
+        $this->assertFalse($languages === $languagesNew);
+        $this->assertSame(['de-CH', 'fr-CH'], $languagesNew->column('locale'));
+    }
+    
+    public function testDomainMethodWithNullValue()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new Languages(
+            $factory->createLanguage('en-US', key: 'en_us', default: true),
+            $factory->createLanguage('de-CH', key: 'de_ch', domain: 'example.ch'),
+            $factory->createLanguage('fr-CH', key: 'fr_CH', domain: 'example.ch', active: false),
+        );
+        
+        $languagesNew = $languages->domain(null);
+        
+        $this->assertFalse($languages === $languagesNew);
+        $this->assertSame(['en-US'], $languagesNew->column('locale'));
     }
     
     public function testMapMethod()
@@ -556,7 +503,7 @@ class LanguagesTest extends TestCase
         
         $this->assertFalse($languages === $languagesNew);
         
-        $this->assertSame(['EN-US', 'DE-CH'], $languagesNew->column('name'));
+        $this->assertSame(['EN-US', 'DE-CH', 'FR-CH'], $languagesNew->column('name'));
     }
     
     public function testSortMethod()
@@ -577,72 +524,11 @@ class LanguagesTest extends TestCase
         
         $ids = [];
         
-        foreach($languagesNew->all(activeOnly: false) as $language) {
+        foreach($languagesNew->all() as $language) {
             $ids[] = $language->id();
         }
         
         $this->assertSame([3, 2, 4], $ids);
-    }
-    
-    public function testAllMethodIndexedByLocaleKeyIdSlug()
-    {
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
-        );
-        
-        $all = $languages->all('locale');
-        
-        $this->assertSame(
-            ['en-US', 'de-CH'],
-            array_keys($all)
-        );
-        
-        $all = $languages->all('key');
-        
-        $this->assertSame(
-            ['en_us', 'de_ch'],
-            array_keys($all)
-        );
-        
-        $all = $languages->all('id');
-        
-        $this->assertSame(
-            [1, 2],
-            array_keys($all)
-        );
-        
-        $all = $languages->all('slug');
-        
-        $this->assertSame(
-            ['en-us', 'de-ch'],
-            array_keys($all)
-        );        
-    }
-    
-    public function testAllMethodWithInactive()
-    {
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
-        );
-        
-        $all = $languages->all(activeOnly: false);
-        
-        $this->assertSame(
-            [
-                'en-US' => $all['en-US'],
-                'de-CH' => $all['de-CH'],
-                'fr-CH' => $all['fr-CH'],
-            ],
-            $all
-        );
     }
     
     public function testColumnMethod()
@@ -656,27 +542,27 @@ class LanguagesTest extends TestCase
         );
         
         $this->assertSame(
-            ['en-US', 'de-CH'],
+            ['en-US', 'de-CH', 'fr-CH'],
             $languages->column('locale')
         );
         
         $this->assertSame(
-            ['en_us', 'de_ch'],
+            ['en_us', 'de_ch', 'fr_ch'],
             $languages->column('key')
         );
         
         $this->assertSame(
-            [1, 2],
+            [1, 2, 3],
             $languages->column('id')
         );
 
         $this->assertSame(
-            ['en-us', 'de-ch'],
+            ['en-us', 'de-ch', 'fr-ch'],
             $languages->column('slug')
         );
         
         $this->assertSame(
-            [null, null],
+            [null, null, null],
             $languages->column('url')
         );        
     }
@@ -688,7 +574,6 @@ class LanguagesTest extends TestCase
         $languages = new Languages(
             $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
             $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
         );
         
         $this->assertSame(
@@ -699,22 +584,6 @@ class LanguagesTest extends TestCase
         $this->assertSame(
             [1 => 'en-US', 2 => 'de-CH'],
             $languages->column('locale', 'id')
-        );        
-    }
-    
-    public function testColumnMethodWithInactive()
-    {
-        $factory = new LanguageFactory();
-
-        $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
-        );
-        
-        $this->assertSame(
-            ['en-US', 'de-CH', 'fr-CH'],
-            $languages->column('locale', activeOnly: false)
         );        
     }
     

@@ -19,21 +19,31 @@ use Generator;
  * Languages
  */
 final class Languages implements LanguagesInterface
-{        
+{
     /**
-     * @var array<mixed> Holds the languages.
+     * @var array<int, LanguageInterface> Holds the languages.
      */
     protected array $languages = [];
     
     /**
-     * @var array<mixed> Holds the active languages.
+     * @var null|LanguageInterface
      */
-    protected array $activeLanguages = [];    
+    protected null|LanguageInterface $defaultLanguage = null;
+    
+    /**
+     * @var null|LanguageInterface
+     */
+    protected null|LanguageInterface $currentLanguage = null;
 
     /**
      * @var null|array<mixed> The fallbacks. ['key' => ['en' => 'de']]
      */
     protected null|array $fallbacks = null;
+    
+    /**
+     * @var array
+     */
+    protected array $cache = [];
 
     /**
      * Create a new Languages.
@@ -42,84 +52,55 @@ final class Languages implements LanguagesInterface
      */
     public function __construct(
         LanguageInterface ...$languages
-    ) {        
+    ) {
         $this->addLanguages(...$languages);
     }
     
     /**
-     * If has language by key.
+     * Returns true if language exist, otherwise false.
      *
-     * @param string|int $languageKey The language key, locale or id
-     * @param bool $activeOnly
-     * @return bool True language key exists, otherwise false.
-     */    
-    public function has(string|int $languageKey, bool $activeOnly = true): bool
-    {        
-        // by id.
-        if (is_int($languageKey))
-        {
-            $languages = $this->all('id', $activeOnly);
-            return isset($languages[$languageKey]);
-        }
-
-        // by locale
-        $languages = $this->all('locale', $activeOnly);
-        
-        if (isset($languages[$languageKey]))
-        {
-            return true;
-        }
-
-        // by key
-        $languages = $this->all('key', $activeOnly);
-        
-        return isset($languages[$languageKey]);
+     * @param string|int $languageKey The language key, locale or id. (case-insensitive)
+     * @return bool
+     */
+    public function has(string|int $languageKey): bool
+    {
+        return $this->get($languageKey, false) ? true : false;
     }
     
     /**
-     * Gets a language.
+     * Returns a language by the specified parameters.
      *
-     * @param string|int $languageKey The language key, locale or id
+     * @param string|int $languageKey The language key, locale, slug or id. (case-insensitive)
      * @param bool $fallback If language does not exist, it gets the fallback if set to true.
      * @return null|LanguageInterface
-     */    
-    public function get(string|int $languageKey, bool $fallback = true): ?LanguageInterface
+     */
+    public function get(string|int $languageKey, bool $fallback = true): null|LanguageInterface
     {
-        // by id.
-        if (is_int($languageKey))
-        {
-            $languages = $this->all('id');
+        // by id:
+        if (is_int($languageKey)) {
+            
+            if (array_key_exists($languageKey, $this->cache['id'] ?? [])) {
+                return $this->languages[$this->cache['id'][$languageKey]] ?? null;
+            }
+            
+            return null;
+        }
+        
+        $langKey = strtolower($languageKey);
+        
+        // check by locale:
+        if (array_key_exists($langKey, $this->cache['locale'] ?? [])) {
+            return $this->languages[$this->cache['locale'][$langKey]] ?? null;
+        }
 
-            if (isset($languages[$languageKey]))
-            {
-                return $languages[$languageKey];
-            }
-        } 
-        else
-        {
-            // check by locale
-            $languages = $this->all('locale');
+        // check by key:
+        if (array_key_exists($langKey, $this->cache['key'] ?? [])) {
+            return $this->languages[$this->cache['key'][$langKey]] ?? null;
+        }
 
-            if (isset($languages[$languageKey]))
-            {
-                return $languages[$languageKey];
-            }
-            
-            // check by key
-            $languages = $this->all('key');
-            
-            if (isset($languages[$languageKey]))
-            {
-                return $languages[$languageKey];
-            }
-            
-            // check by slug
-            $languages = $this->all('slug');
-            
-            if (isset($languages[$languageKey]))
-            {
-                return $languages[$languageKey];
-            }            
+        // check by slug:
+        if (array_key_exists($langKey, $this->cache['slug'] ?? [])) {
+            return $this->languages[$this->cache['slug'][$langKey]] ?? null;
         }
         
         return $fallback === true ? $this->getFallback($languageKey) : null;        
@@ -130,61 +111,62 @@ final class Languages implements LanguagesInterface
      *
      * @param string $columnKey
      * @param string $indexKey
-     * @param bool $activeOnly
      * @return array
-     */    
-    public function column(string $columnKey = 'locale', null|string $indexKey = null, bool $activeOnly = true): array
+     */
+    public function column(string $columnKey = 'locale', null|string $indexKey = null): array
     {
-        return array_column($this->all('locale', $activeOnly), $columnKey, $indexKey);
-    }    
+        return array_column($this->all(), $columnKey, $indexKey);
+    }
     
     /**
-     * Gets the default language.
+     * Returns the default language.
      *
      * @return LanguageInterface
      * @throws LanguageException If no default language is found.
      */
     public function default(): LanguageInterface
-    {        
-        if (!isset($this->languages['default'])) {
+    {
+        if (is_null($this->defaultLanguage)) {
             throw new LanguageException('No default language found');
         }
         
-        return $this->languages['default'];
+        return $this->defaultLanguage;
     }
     
     /**
-     * Gets the current language.
+     * Returns the current language.
      *
-     * @param null|string|int $currentLanguageKey If set it changes the current language.
+     * @param null|string|int $currentLanguageKey (case-insensitive) If set it changes the current language.
      * @return LanguageInterface
      */    
     public function current(null|string|int $currentLanguageKey = null): LanguageInterface
     {
         // change the current language.
-        if ($currentLanguageKey !== null)
-        {
-            $this->setCurrent($currentLanguageKey);
+        if ($currentLanguageKey !== null) {
+            
+            $language = $this->get($currentLanguageKey, fallback: false);
+
+            if (!is_null($language)) {
+                $this->currentLanguage = $language;
+            }
         }
         
         // set the current language from the default if not set.
-        if (!isset($this->languages['current']))
-        {
-            $this->languages['current'] = $this->default();
+        if (is_null($this->currentLanguage)) {
+            $this->currentLanguage = $this->default();
         }
 
-        return $this->languages['current'];
+        return $this->currentLanguage;
     }
     
     /**
      * Returns the first language.
      *
-     * @param bool $activeOnly
      * @return null|LanguageInterface
      */    
-    public function first(bool $activeOnly = true): null|LanguageInterface
+    public function first(): null|LanguageInterface
     {
-        $languages = $this->all(activeOnly: $activeOnly);
+        $languages = $this->all();
         
         $key = array_key_first($languages);
         
@@ -196,32 +178,13 @@ final class Languages implements LanguagesInterface
     }
     
     /**
-     * Gets all languages.
+     * Returns all languages.
      *
-     * @param string $indexKey The index key such as id, key, locale, slug.
-     * @param bool $activeOnly If true returns only active languages, otherwise all.
-     * @return array The languages.
+     * @return array<int, LanguageInterface>
      */    
-    public function all(string $indexKey = 'locale', bool $activeOnly = true): array
+    public function all(): array
     {
-        if ($activeOnly)
-        {
-            if (isset($this->activeLanguages[$indexKey]))
-            {
-                return $this->activeLanguages[$indexKey];
-            }
-
-            // return and store it for reusage.
-            return $this->activeLanguages[$indexKey] = $this->reindex($this->activeLanguages, $indexKey);            
-        }
-        
-        if (isset($this->languages[$indexKey]))
-        {
-            return $this->languages[$indexKey];
-        }
-        
-        // return and store it for reusage.
-        return $this->languages[$indexKey] = $this->reindex($this->languages, $indexKey);
+        return $this->languages;
     }
     
     /**
@@ -244,7 +207,7 @@ final class Languages implements LanguagesInterface
      */
     public function filter(callable $callback): static
     {
-        $filtered = array_filter($this->all(activeOnly: false), $callback);
+        $filtered = array_filter($this->all(), $callback);
         
         return new static(...$filtered);
     }
@@ -259,7 +222,7 @@ final class Languages implements LanguagesInterface
     {
         $mapped = [];
         
-        foreach($this->all(activeOnly: false) as $language) {
+        foreach($this->all() as $language) {
             $mapped[] = $mapper($language);
         }
         
@@ -274,36 +237,56 @@ final class Languages implements LanguagesInterface
      */
     public function sort(callable $callback): static
     {
-        $languages = $this->all(activeOnly: false);
+        $languages = $this->all();
         
         usort($languages, $callback);
         
         return new static(...$languages);
     }
+    
+    /**
+     * Returns a new instance with the active or inactive languages.
+     *
+     * @param bool $active
+     * @return static
+     */
+    public function active(bool $active = true): static
+    {
+        return $this->filter(fn(LanguageInterface $l): bool => $l->active() === $active);
+    }
+    
+    /**
+     * Returns a new instance with the specified domain filtered.
+     *
+     * @param null|string $domain
+     * @return static
+     */
+    public function domain(null|string $domain): static
+    {
+        return $this->filter(fn(LanguageInterface $l): bool => $l->domain() === $domain);
+    }
 
     /**
-     * Gets the fallbacks.
+     * Returns the fallbacks.
      *
      * @param string $indexKey The key to get set.
      * @return array The fallbacks.
-     */    
+     */
     public function fallbacks(string $indexKey = 'locale'): array
     {
-        if (is_null($this->fallbacks))
-        {
+        if (is_null($this->fallbacks)) {
+            
             $this->fallbacks = [];
             
-            foreach($this->all('locale', false) as $language)
-            {
-                if (is_null($language->fallback()))
-                {
+            foreach($this->all() as $language) {
+                
+                if (is_null($language->fallback())) {
                     continue;
                 }
                 
                 $fallbackLanguage = $this->get($language->fallback(), false);
 
-                if (!is_null($fallbackLanguage))
-                {
+                if (!is_null($fallbackLanguage)) {
                     $this->fallbacks['locale'][$language->locale()] = $fallbackLanguage->locale();
                     $this->fallbacks['key'][$language->key()] = $fallbackLanguage->key();
                     $this->fallbacks['id'][$language->id()] = $fallbackLanguage->id();
@@ -327,36 +310,32 @@ final class Languages implements LanguagesInterface
     }
 
     /**
-     * Gets the fallback language for the given language key.
+     * Returns the fallback language for the given language key.
      *
-     * @param string|int $languageKey The language key, locale, id or slug.
+     * @param string|int $languageKey The language key, locale, slug or id.
      * @return LanguageInterface
-     */    
+     */
     public function getFallback(string|int $languageKey): LanguageInterface
     {
-        if (is_int($languageKey))
-        {
+        if (is_int($languageKey)) {
             $fallbacks = $this->fallbacks('id');
             $fallbackKey = $fallbacks[$languageKey] ?? null;
         } else {
             $fallbacks = $this->fallbacks('locale');
             $fallbackKey = $fallbacks[$languageKey] ?? null;
             
-            if ($fallbackKey === null)
-            {
+            if ($fallbackKey === null) {
                 $fallbacks = $this->fallbacks('key');
                 $fallbackKey = $fallbacks[$languageKey] ?? null;
             }
             
-            if ($fallbackKey === null)
-            {
+            if ($fallbackKey === null) {
                 $fallbacks = $this->fallbacks('slug');
                 $fallbackKey = $fallbacks[$languageKey] ?? null;
             }
         }
         
-        if ($fallbackKey === null)
-        {
+        if ($fallbackKey === null) {
             return $this->default();
         }
         
@@ -368,71 +347,25 @@ final class Languages implements LanguagesInterface
      *
      * @param LanguageInterface $language
      * @return void
-     */    
+     */
     protected function addLanguages(LanguageInterface ...$languages): void
     {
-        foreach($languages as $language)
-        {
-            $this->languages['locale'][$language->locale()] = $language;
-
-            if ($language->active())
-            {
-                $this->activeLanguages['locale'][$language->locale()] = $language;
-                
-                // set default language.
-                if (!isset($this->languages['default']) && $language->default())
-                {
-                    $this->languages['default'] = $language;
-                }
+        $this->languages = $languages;
+        
+        foreach($this->languages as $key => $language) {
+            // cache data:
+            $this->cache['locale'][strtolower($language->locale())] = $key;
+            $this->cache['key'][strtolower($language->key())] = $key;
+            $this->cache['slug'][strtolower($language->slug())] = $key;
+            $this->cache['id'][$language->id()] = $key;
+            
+            // set default language:
+            if (
+                is_null($this->defaultLanguage)
+                && $language->default()
+            ) {
+                $this->defaultLanguage = $language;
             }
         }
-    }
-    
-    /**
-     * Set the current language
-     *
-     * @param string|int $current The language key, locale, id or slug.
-     * @return bool True if language could be set, otherwise false;
-     */    
-    protected function setCurrent(string|int $current): bool
-    {
-        $language = $this->get($current, fallback: false);
-        
-        if (!is_null($language))
-        {
-            $this->languages['current'] = $language;
-            return true;
-        }
-        
-        return false;
-    }    
-    
-    /**
-     * Reindex the languages array.
-     *
-     * @param array $languages The languages.
-     * @param string $indexKey The index key such as 'id', 'key', 'locale'.
-     * @return array The languages.
-     */    
-    protected function reindex(array $languages, string $indexKey): array
-    {
-        $languages = $languages['locale'] ?? [];
-        
-        if (empty($languages)) {
-            return [];
-        }
-        
-        $reindexed = [];
-        $method = $indexKey;
-        
-        foreach($languages as $language)
-        {
-            if (method_exists($language, $method))
-            {
-                $reindexed[$language->$method()] = $language;
-            }
-        }
-        
-        return $reindexed;
     }
 }

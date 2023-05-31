@@ -202,32 +202,23 @@ var_dump($languages instanceof LanguagesInterface);
 ### Get Language
 
 ```php
-use Tobento\Service\Language\LanguageInterface;
-
-$language = $languages->get('de-CH'); // supports locale, id, key or slug values.
-
-var_dump($language instanceof LanguageInterface);
-// bool(true)
-```
-
-If the language is inactive, it will return the fallback language and if the language does not exist it will return the default language:
-
-```php
 use Tobento\Service\Language\LanguageFactory;
 use Tobento\Service\Language\Languages;
 use Tobento\Service\Language\LanguagesInterface;
+use Tobento\Service\Language\LanguageInterface;
 
 $languageFactory = new LanguageFactory();
 
 $languages = new Languages(
     $languageFactory->createLanguage('en', default: true),
     $languageFactory->createLanguage('de', fallback: 'en'),
-    $languageFactory->createLanguage('fr', fallback: 'de', active: false),
 );
 
-// Will return the fallback language as fr is inactive.
-var_dump($languages->get('fr')->locale());
-// string(2) "de"
+$language = $languages->get('de-CH');
+// supports locale, id, key or slug values (all are case-insensitive).
+
+var_dump($language instanceof LanguageInterface);
+// bool(true)
 
 // Will return the default language as language does not exist.
 var_dump($languages->get('it')->locale());
@@ -244,14 +235,13 @@ var_dump($languages->get('it', fallback: false)?->locale());
 **Check if a language exist:**
 
 ```php
-var_dump($languages->has('de-CH')); // supports locale, id, key or slug values.
+// supports locale, id, key or slug values (all are case-insensitive).
+
+var_dump($languages->has('de-CH')); 
 // bool(true)
 
 var_dump($languages->has('fr'));
 // bool(false)
-
-var_dump($languages->has('fr', activeOnly: false));
-// bool(true)
 ```
 
 ### Default Language
@@ -270,10 +260,11 @@ var_dump($defaultLanguage instanceof LanguageInterface);
 **Set the current language:**
 
 ```php
-$languages->current('en'); // supports locale, id, key or slug values.
+$languages->current('en');
+// supports locale, id, key or slug values (all are case-insensitive).
 ```
 
-> :warning: If the language does not exist or is inactive, the default language will be set as the current language but only if none is defined.
+> :warning: If the language does not exist, the default language will be set as the current language but only if none is defined.
 
 **Get the current language:**
 
@@ -292,34 +283,10 @@ var_dump($currentLanguage instanceof LanguageInterface);
 use Tobento\Service\Language\LanguageInterface;
 
 $allLanguages = $languages->all();
-// array<string, LanguageInterface>
+// array<int, LanguageInterface>
 
 // or just
 foreach($languages as $language) {}
-```
-
-Returns only the active languages!
-
-**Indexed by language parameter:**
-
-You may get the languages indexed by a parameter such as locale, key, id or slug.
-
-```php
-use Tobento\Service\Language\LanguageInterface;
-
-$allLanguages = $languages->all(indexKey: 'id'); // default is 'locale'
-// array<int, LanguageInterface>
-```
-
-**Get all languages inclusive inactive:**
-
-By default calling the all() method returns only the active languages. You may return all languages by the following way:
-
-```php
-use Tobento\Service\Language\LanguageInterface;
-
-$allLanguages = $languages->all(activeOnly: false); // default is true
-// array<string, LanguageInterface>
 ```
 
 ### Columns
@@ -348,25 +315,11 @@ $locales = $languages->column('locale', 'id');
 )*/
 ```
 
-**Inclusive active languages:**
-
-```php
-$locales = $languages->column('locale', activeOnly: false);
-/*Array
-(
-    [0] => en
-    [1] => de
-    [2] => de-CH
-    [3] => fr
-    [4] => it
-)*/
-```
-
 ### Fallbacks
 
 **Get the fallbacks**
 
-Returns fallbacks for all languages inclusive inactive.
+Returns fallbacks for all languages.
 
 ```php
 // by locale
@@ -448,6 +401,30 @@ use Tobento\Service\Language\LanguageInterface;
 $languagesNew = $languages->filter(
     fn(LanguageInterface $l): bool => $l->active()
 );
+```
+
+**active**
+
+Returns a new instance with the active or inactive languages.
+
+```php
+use Tobento\Service\Language\LanguageInterface;
+
+$activeLanguages = $languages->active();
+
+$inactiveLanguages = $languages->active(active: false);
+```
+
+**domain**
+
+Returns a new instance with the specified domain filtered.
+
+```php
+use Tobento\Service\Language\LanguageInterface;
+
+$chLanguages = $languages->domain('example.ch');
+
+$undomainedLanguages = $languages->domain(null);
 ```
 
 **map**
