@@ -61,7 +61,7 @@ class LanguageFactory implements LanguageFactoryInterface
     ): LanguageInterface {
         
         $name = $name ?: $locale;
-        $key = $key ?: strtolower($locale);
+        $key = $key ?: $locale;
         $iso = $iso ?: strtolower(substr($locale, 0, 2));
         $region = $region ?: $this->extractRegionFromLocale($locale);
         $slug = $slug ?: $key;    
