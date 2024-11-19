@@ -209,7 +209,7 @@ final class Languages implements LanguagesInterface
     {
         $filtered = array_filter($this->all(), $callback);
         
-        return new static(...$filtered);
+        return $this->reassignCurrent(new static(...$filtered));
     }
     
     /**
@@ -226,7 +226,7 @@ final class Languages implements LanguagesInterface
             $mapped[] = $mapper($language);
         }
         
-        return new static(...$mapped);
+        return $this->reassignCurrent(new static(...$mapped));
     }
     
     /**
@@ -241,7 +241,7 @@ final class Languages implements LanguagesInterface
         
         usort($languages, $callback);
         
-        return new static(...$languages);
+        return $this->reassignCurrent(new static(...$languages));
     }
     
     /**
@@ -367,5 +367,23 @@ final class Languages implements LanguagesInterface
                 $this->defaultLanguage = $language;
             }
         }
+    }
+    
+    /**
+     * Reassign current language to languages.
+     *
+     * @param Language $language
+     * @return Languages
+     */
+    protected function reassignCurrent(Languages $languages): Languages
+    {
+        if (
+            !is_null($this->currentLanguage)
+            && $languages->has($this->currentLanguage->locale())
+        ) {
+            $languages->current($this->currentLanguage->locale());
+        }
+        
+        return $languages;
     }
 }
