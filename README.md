@@ -167,11 +167,11 @@ use Tobento\Service\Language\LanguagesInterface;
 $languageFactory = new LanguageFactory();
 
 $languages = new Languages(
-    $languageFactory->createLanguage('en', default: true),
-    $languageFactory->createLanguage('de', fallback: 'en'),
-    $languageFactory->createLanguage('de-CH', fallback: 'de'),
-    $languageFactory->createLanguage('fr', fallback: 'en', active: false),
-    $languageFactory->createLanguage('it', fallback: 'de', active: false),
+    $languageFactory->createLanguage(locale: 'en', default: true),
+    $languageFactory->createLanguage(locale: 'de', fallback: 'en'),
+    $languageFactory->createLanguage(locale: 'de-CH', fallback: 'de'),
+    $languageFactory->createLanguage(locale: 'fr', fallback: 'en', active: false),
+    $languageFactory->createLanguage(locale: 'it', fallback: 'de', active: false),
 );
 
 var_dump($languages instanceof LanguagesInterface);
@@ -210,8 +210,8 @@ use Tobento\Service\Language\LanguageInterface;
 $languageFactory = new LanguageFactory();
 
 $languages = new Languages(
-    $languageFactory->createLanguage('en', default: true),
-    $languageFactory->createLanguage('de', fallback: 'en'),
+    $languageFactory->createLanguage(locale: 'en', default: true),
+    $languageFactory->createLanguage(locale: 'de', fallback: 'en'),
 );
 
 $language = $languages->get('de-CH');
@@ -225,10 +225,10 @@ var_dump($languages->get('it')->locale());
 // string(2) "en"
 
 // Without fallback
-var_dump($languages->get('fr', fallback: false)?->locale());
+var_dump($languages->get(languageKey: 'fr', fallback: false)?->locale());
 // NULL
 
-var_dump($languages->get('it', fallback: false)?->locale());
+var_dump($languages->get(languageKey: 'it', fallback: false)?->locale());
 // NULL
 ```
 
@@ -465,11 +465,11 @@ $languageFactory = new LanguageFactory();
 
 $areaLanguages = new AreaLanguages(
     null, // null|LanguagesFactoryInterface
-    $languageFactory->createLanguage('en', area: 'frontend', default: true),
-    $languageFactory->createLanguage('de', area: 'frontend', fallback: 'en'),
-    $languageFactory->createLanguage('de-CH', area: 'frontend', fallback: 'de'),   
-    $languageFactory->createLanguage('en', area: 'backend', default: true),
-    $languageFactory->createLanguage('de', area: 'backend', fallback: 'en'), 
+    $languageFactory->createLanguage(locale: 'en', area: 'frontend', default: true),
+    $languageFactory->createLanguage(locale: 'de', area: 'frontend', fallback: 'en'),
+    $languageFactory->createLanguage(locale: 'de-CH', area: 'frontend', fallback: 'de'),   
+    $languageFactory->createLanguage(locale: 'en', area: 'backend', default: true),
+    $languageFactory->createLanguage(locale: 'de', area: 'backend', fallback: 'en'), 
 );
 
 var_dump($areaLanguages instanceof AreaLanguagesInterface);
@@ -492,6 +492,22 @@ var_dump($areaLanguages->get('api'));
 
 var_dump($areaLanguages->has('frontend'));
 // bool(true)
+```
+
+**add**
+
+```php
+use Tobento\Service\Language\LanguageFactory;
+use Tobento\Service\Language\Languages;
+use Tobento\Service\Language\LanguagesInterface;
+
+$factory = new LanguageFactory();
+
+$languages = new Languages(
+    $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+);
+        
+$areaLanguages->add('frontend', $languages);
 ```
 
 ## Current Language Resolver
