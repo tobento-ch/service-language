@@ -32,10 +32,10 @@ class AreaLanguagesTest extends TestCase
 
         $languages = new AreaLanguages(
             null,
-            $factory->createLanguage('en', area: 'frontend', default: true),
-            $factory->createLanguage('de', area: 'frontend'),
-            $factory->createLanguage('en', area: 'backend'),
-            $factory->createLanguage('de', area: 'backend', default: true), 
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+            $factory->createLanguage(locale: 'de', area: 'frontend'),
+            $factory->createLanguage(locale: 'en', area: 'backend'),
+            $factory->createLanguage(locale: 'de', area: 'backend', default: true), 
         );
         
         $this->assertInstanceOf(
@@ -50,10 +50,10 @@ class AreaLanguagesTest extends TestCase
 
         $languages = new AreaLanguages(
             null,
-            $factory->createLanguage('en', area: 'frontend', default: true),
-            $factory->createLanguage('de', area: 'frontend'),
-            $factory->createLanguage('en', area: 'backend'),
-            $factory->createLanguage('de', area: 'backend', default: true), 
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+            $factory->createLanguage(locale: 'de', area: 'frontend'),
+            $factory->createLanguage(locale: 'en', area: 'backend'),
+            $factory->createLanguage(locale: 'de', area: 'backend', default: true), 
         );
         
         $this->assertSame(
@@ -68,13 +68,28 @@ class AreaLanguagesTest extends TestCase
 
         $languages = new AreaLanguages(
             null,
-            $factory->createLanguage('en', area: 'frontend', default: true),
-            $factory->createLanguage('de', area: 'frontend'),
-            $factory->createLanguage('en', area: 'backend'),
-            $factory->createLanguage('de', area: 'backend', default: true), 
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+            $factory->createLanguage(locale: 'de', area: 'frontend'),
+            $factory->createLanguage(locale: 'en', area: 'backend'),
+            $factory->createLanguage(locale: 'de', area: 'backend', default: true), 
         );
         
         $this->assertTrue($languages->has('frontend'));
         $this->assertFalse($languages->has('api'));
-    }    
+    }
+    
+    public function testAddMethod()
+    {        
+        $factory = new LanguageFactory();
+        
+        $frontend = new Languages(
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+        );
+
+        $languages = new AreaLanguages();
+        
+        $languages->add('frontend', $frontend);
+        
+        $this->assertTrue($frontend === $languages->get('frontend'));
+    }
 }
