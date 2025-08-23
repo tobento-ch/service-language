@@ -40,7 +40,7 @@ class CurrentLanguageResolverTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', default: true),
+            $factory->createLanguage(locale: 'en-US', default: true),
             $factory->createLanguage('de-CH'),
         );
         
@@ -54,7 +54,7 @@ class CurrentLanguageResolverTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', default: true),
+            $factory->createLanguage(locale: 'en-US', default: true),
             $factory->createLanguage('de-CH'),
         );
         
@@ -73,7 +73,7 @@ class CurrentLanguageResolverTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', default: true),
+            $factory->createLanguage(locale: 'en-US', default: true),
             $factory->createLanguage('de-CH'),
         );
         

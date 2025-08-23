@@ -26,7 +26,7 @@ class LanguageFactoryTest extends TestCase
     {        
         $factory = new LanguageFactory();
 
-        $language = $factory->createLanguage('en', area: 'frontend', default: true);
+        $language = $factory->createLanguage(locale: 'en', area: 'frontend', default: true);
         
         $this->assertInstanceOf(
             LanguageInterface::class,

@@ -30,9 +30,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', default: true),
-            $factory->createLanguage('de', fallback: 'en'),
-            $factory->createLanguage('fr', fallback: 'en', active: false),
+            $factory->createLanguage(locale: 'en', default: true),
+            $factory->createLanguage(locale: 'de', fallback: 'en'),
+            $factory->createLanguage(locale: 'fr', fallback: 'en', active: false),
         );
 
         $this->assertInstanceOf(
@@ -46,9 +46,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', default: true),
-            $factory->createLanguage('de', fallback: 'en'),
-            $factory->createLanguage('fr', fallback: 'de', active: false),
+            $factory->createLanguage(locale: 'en', default: true),
+            $factory->createLanguage(locale: 'de', fallback: 'en'),
+            $factory->createLanguage(locale: 'fr', fallback: 'de', active: false),
         );
         
         $this->assertSame(
@@ -62,14 +62,14 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', default: true),
-            $factory->createLanguage('de', fallback: 'en'),
-            $factory->createLanguage('fr', fallback: 'en', active: false),
+            $factory->createLanguage(locale: 'en', default: true),
+            $factory->createLanguage(locale: 'de', fallback: 'en'),
+            $factory->createLanguage(locale: 'fr', fallback: 'en', active: false),
         );
         
         $this->assertSame(
             null,
-            $languages->get('it', fallback: false)
+            $languages->get(languageKey: 'it', fallback: false)
         );        
     }
     
@@ -78,8 +78,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', id: 1, default: true),
-            $factory->createLanguage('de', id: 2),
+            $factory->createLanguage(locale: 'en', id: 1, default: true),
+            $factory->createLanguage(locale: 'de', id: 2),
         );
         
         $this->assertSame(
@@ -93,8 +93,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de-ch'),
+            $factory->createLanguage(locale: 'en-US', key: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de-ch'),
         );
         
         $this->assertSame(
@@ -108,8 +108,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', slug: 'de-ch'),
+            $factory->createLanguage(locale: 'en-US', slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', slug: 'de-ch'),
         );
         
         $this->assertSame(
@@ -123,9 +123,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', default: true),
-            $factory->createLanguage('de', fallback: 'en'),
-            $factory->createLanguage('fr', fallback: 'en', active: false),
+            $factory->createLanguage(locale: 'en', default: true),
+            $factory->createLanguage(locale: 'de', fallback: 'en'),
+            $factory->createLanguage(locale: 'fr', fallback: 'en', active: false),
         );
         
         $this->assertTrue($languages->has('de'));
@@ -139,8 +139,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', id: 1, default: true),
-            $factory->createLanguage('de', id: 2, active: false),
+            $factory->createLanguage(locale: 'en', id: 1, default: true),
+            $factory->createLanguage(locale: 'de', id: 2, active: false),
         );
         
         $this->assertTrue($languages->has(1));
@@ -153,8 +153,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'en-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'en-ch', active: false),
         );
         
         $this->assertTrue($languages->has('en-us'));
@@ -168,8 +168,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('enUS', slug: 'en-us', default: true),
-            $factory->createLanguage('deCH', slug: 'en-ch', active: false),
+            $factory->createLanguage(locale: 'enUS', slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'deCH', slug: 'en-ch', active: false),
         );
         
         $this->assertTrue($languages->has('en-us'));
@@ -182,8 +182,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', default: true),
-            $factory->createLanguage('de-CH'),
+            $factory->createLanguage(locale: 'en-US', default: true),
+            $factory->createLanguage(locale: 'de-CH'),
         );
         
         $this->assertInstanceOf(
@@ -211,7 +211,7 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', default: true),
+            $factory->createLanguage(locale: 'en', default: true),
             $factory->createLanguage('de'),
         );
         
@@ -226,9 +226,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', default: true),
+            $factory->createLanguage(locale: 'en', default: true),
             $factory->createLanguage('de'),
-            $factory->createLanguage('fr', active: false),
+            $factory->createLanguage(locale: 'fr', active: false),
         );
         
         $languages->current('fr');
@@ -244,9 +244,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', default: true),
+            $factory->createLanguage(locale: 'en', default: true),
             $factory->createLanguage('de'),
-            $factory->createLanguage('fr', active: false),
+            $factory->createLanguage(locale: 'fr', active: false),
         );
         
         $languages->current('it');
@@ -262,9 +262,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en', default: true),
+            $factory->createLanguage(locale: 'en', default: true),
             $factory->createLanguage('de'),
-            $factory->createLanguage('fr', active: false),
+            $factory->createLanguage(locale: 'fr', active: false),
         );
         
         $languages->current('de');
@@ -281,8 +281,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en.us', default: true),
-            $factory->createLanguage('de-CH', key: 'de.ch'),
+            $factory->createLanguage(locale: 'en-US', key: 'en.us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de.ch'),
         );
         
         $languages->current('de-CH');
@@ -297,8 +297,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de-ch'),
+            $factory->createLanguage(locale: 'en-US', key: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de-ch'),
         );
         
         $languages->current('de-ch');
@@ -314,8 +314,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', id: 1, default: true),
-            $factory->createLanguage('de-CH', id: 2),
+            $factory->createLanguage(locale: 'en-US', id: 1, default: true),
+            $factory->createLanguage(locale: 'de-CH', id: 2),
         );
         
         $languages->current(2);
@@ -331,8 +331,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', slug: 'de-ch'),
+            $factory->createLanguage(locale: 'en-US', slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', slug: 'de-ch'),
         );
         
         $languages->current('de-ch');
@@ -347,11 +347,11 @@ class LanguagesTest extends TestCase
     {
         $factory = new LanguageFactory();
         
-        $language = $factory->createLanguage('en-US', slug: 'en-us', default: true);
+        $language = $factory->createLanguage(locale: 'en-US', slug: 'en-us', default: true);
         
         $languages = new Languages(
             $language,
-            $factory->createLanguage('de-CH', slug: 'de-ch'),
+            $factory->createLanguage(locale: 'de-CH', slug: 'de-ch'),
         );
         
         $this->assertSame($language, $languages->first());
@@ -362,9 +362,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
         );
         
         $all = $languages->all();
@@ -384,9 +384,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
         );
         
         $iterated = [];
@@ -410,9 +410,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
         );
         
         $languagesNew = $languages->filter(
@@ -428,9 +428,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
         );
         
         $languages->current(2);
@@ -449,9 +449,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
         );
         
         $languagesNew = $languages->active();
@@ -465,9 +465,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
         );
         
         $languagesNew = $languages->active(active: false);
@@ -481,9 +481,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
         );
         
         $languages->current(2);
@@ -500,9 +500,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', domain: 'example.ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', domain: 'example.ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', domain: 'example.ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', domain: 'example.ch', active: false),
         );
         
         $languagesNew = $languages->domain('example.ch');
@@ -516,9 +516,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', domain: 'example.ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', domain: 'example.ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', domain: 'example.ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', domain: 'example.ch', active: false),
         );
         
         $languagesNew = $languages->domain(null);
@@ -532,9 +532,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, domain: 'example.ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, domain: 'example.ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, domain: 'example.ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 3, domain: 'example.ch', active: false),
         );
         
         $languages->current(2);
@@ -551,9 +551,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
         );
         
         $languagesNew = $languages->map(function(LanguageInterface $l): LanguageInterface {
@@ -570,9 +570,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 3, slug: 'fr-ch', active: false),
         );
         
         $languages->current(2);
@@ -591,9 +591,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 2, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 3, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 4, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 2, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 3, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 4, slug: 'fr-ch', active: false),
         );
         
         $languages->current(2);
@@ -612,9 +612,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 2, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 3, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_CH', id: 4, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 2, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 3, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_CH', id: 4, slug: 'fr-ch', active: false),
         );
 
         $languagesNew = $languages->sort(
@@ -637,9 +637,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
         );
         
         $this->assertSame(
@@ -673,8 +673,8 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'en-US', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', key: 'de_ch', id: 2, slug: 'de-ch'),
         );
         
         $this->assertSame(
@@ -693,9 +693,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', fallback: 'de-CH', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', fallback: 'en-US', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', fallback: 'de-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', fallback: 'de-CH', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', fallback: 'en-US', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', fallback: 'de-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
         );
         
         $this->assertSame(
@@ -749,9 +749,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', fallback: 'de-CH', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', fallback: 'en-US', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', fallback: 'de-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', fallback: 'de-CH', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', fallback: 'en-US', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', fallback: 'de-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
         );
         
         $this->assertSame(
@@ -780,9 +780,9 @@ class LanguagesTest extends TestCase
         $factory = new LanguageFactory();
 
         $languages = new Languages(
-            $factory->createLanguage('en-US', fallback: 'de-CH', key: 'en_us', id: 1, slug: 'en-us', default: true),
-            $factory->createLanguage('de-CH', fallback: 'en-US', key: 'de_ch', id: 2, slug: 'de-ch'),
-            $factory->createLanguage('fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
+            $factory->createLanguage(locale: 'en-US', fallback: 'de-CH', key: 'en_us', id: 1, slug: 'en-us', default: true),
+            $factory->createLanguage(locale: 'de-CH', fallback: 'en-US', key: 'de_ch', id: 2, slug: 'de-ch'),
+            $factory->createLanguage(locale: 'fr-CH', key: 'fr_ch', id: 3, slug: 'fr-ch', active: false),
         );
         
         $this->assertSame(
