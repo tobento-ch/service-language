@@ -33,4 +33,13 @@ interface AreaLanguagesInterface
      * @return null|LanguagesInterface
      */    
     public function get(string $area): null|LanguagesInterface;
+    
+    /**
+     * Adds languages for the given area.
+     *
+     * @param string $area
+     * @param LanguagesInterface $languages
+     * @return static $this
+     */    
+    public function add(string $area, LanguagesInterface $languages): static;
 }

@@ -69,4 +69,17 @@ class AreaLanguages implements AreaLanguagesInterface
     {
         return $this->languages[$area] ?? null;    
     }
+    
+    /**
+     * Adds languages for the given area.
+     *
+     * @param string $area
+     * @param LanguagesInterface $languages
+     * @return static $this
+     */    
+    public function add(string $area, LanguagesInterface $languages): static
+    {
+        $this->languages[$area] = $languages;
+        return $this;
+    }
 }
