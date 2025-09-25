@@ -345,7 +345,7 @@ final class Languages implements LanguagesInterface
     /**
      * Add languages.
      *
-     * @param LanguageInterface $language
+     * @param LanguageInterface ...$languages
      * @return void
      */
     protected function addLanguages(LanguageInterface ...$languages): void
@@ -372,7 +372,7 @@ final class Languages implements LanguagesInterface
     /**
      * Reassign current language to languages.
      *
-     * @param Language $language
+     * @param Languages $languages
      * @return Languages
      */
     protected function reassignCurrent(Languages $languages): Languages
