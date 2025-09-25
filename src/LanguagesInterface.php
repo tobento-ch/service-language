@@ -16,7 +16,7 @@ namespace Tobento\Service\Language;
 use IteratorAggregate;
 
 /**
- * LanguagesInterface
+ * @extends IteratorAggregate<int, LanguageInterface>
  */
 interface LanguagesInterface extends IteratorAggregate
 {
