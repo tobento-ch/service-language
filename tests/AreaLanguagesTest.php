@@ -92,4 +92,149 @@ class AreaLanguagesTest extends TestCase
         
         $this->assertTrue($frontend === $languages->get('frontend'));
     }
+    
+    public function testAllMethod()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new AreaLanguages(
+            null,
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+            $factory->createLanguage(locale: 'de', area: 'frontend'),
+            $factory->createLanguage(locale: 'en', area: 'backend', default: true),
+        );
+
+        $all = $languages->all();
+
+        $this->assertSame(['frontend', 'backend'], array_keys($all));
+        $this->assertInstanceOf(LanguagesInterface::class, $all['frontend']);
+        $this->assertInstanceOf(LanguagesInterface::class, $all['backend']);
+        $this->assertSame($languages->get('frontend'), $all['frontend']);
+        $this->assertSame($languages->get('backend'), $all['backend']);
+    }
+
+    public function testAllMethodReturnsEmptyArrayIfNoLanguages()
+    {
+        $languages = new AreaLanguages();
+
+        $this->assertSame([], $languages->all());
+    }
+
+    public function testAllMethodIncludesAddedLanguages()
+    {
+        $factory = new LanguageFactory();
+
+        $api = new Languages(
+            $factory->createLanguage(locale: 'en', area: 'api', default: true),
+        );
+
+        $languages = new AreaLanguages();
+        $languages->add('api', $api);
+
+        $this->assertSame(['api' => $api], $languages->all());
+    }
+
+    public function testCountMethodCountsLanguagesOfAllAreas()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new AreaLanguages(
+            null,
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+            $factory->createLanguage(locale: 'de', area: 'frontend'),
+            $factory->createLanguage(locale: 'en', area: 'backend'),
+            $factory->createLanguage(locale: 'de', area: 'backend', default: true),
+        );
+
+        $this->assertSame(4, $languages->count());
+    }
+
+    public function testCountMethodReturnsZeroIfNoLanguages()
+    {
+        $languages = new AreaLanguages();
+
+        $this->assertSame(0, $languages->count());
+    }
+
+    public function testCountMethodIncludesAddedLanguages()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new AreaLanguages(
+            null,
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+        );
+
+        $languages->add('backend', new Languages(
+            $factory->createLanguage(locale: 'en', area: 'backend', default: true),
+            $factory->createLanguage(locale: 'de', area: 'backend'),
+        ));
+
+        $this->assertSame(3, $languages->count());
+    }
+
+    public function testCountMethodAfterReplacingAreaLanguages()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new AreaLanguages(
+            null,
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+            $factory->createLanguage(locale: 'de', area: 'frontend'),
+        );
+
+        $this->assertSame(2, $languages->count());
+
+        // Adding to an existing area replaces its languages:
+        $languages->add('frontend', new Languages(
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+        ));
+
+        $this->assertSame(1, $languages->count());
+    }
+
+    public function testIsTraversable()
+    {
+        $this->assertInstanceOf(\Traversable::class, new AreaLanguages());
+    }
+
+    public function testGetIteratorMethodIteratesLanguagesKeyedByArea()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new AreaLanguages(
+            null,
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+            $factory->createLanguage(locale: 'en', area: 'backend', default: true),
+        );
+
+        $areas = [];
+
+        foreach ($languages as $area => $areaLanguages) {
+            $this->assertInstanceOf(LanguagesInterface::class, $areaLanguages);
+            $areas[] = $area;
+        }
+
+        $this->assertSame(['frontend', 'backend'], $areas);
+    }
+
+    public function testGetIteratorMethodReturnsSameLanguagesAsAll()
+    {
+        $factory = new LanguageFactory();
+
+        $languages = new AreaLanguages(
+            null,
+            $factory->createLanguage(locale: 'en', area: 'frontend', default: true),
+            $factory->createLanguage(locale: 'en', area: 'backend', default: true),
+        );
+
+        $this->assertSame($languages->all(), iterator_to_array($languages->getIterator()));
+    }
+
+    public function testGetIteratorMethodIsEmptyIfNoLanguages()
+    {
+        $languages = new AreaLanguages();
+
+        $this->assertSame([], iterator_to_array($languages));
+    }
 }
