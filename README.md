@@ -492,9 +492,14 @@ var_dump($areaLanguages->get('api'));
 
 var_dump($areaLanguages->has('frontend'));
 // bool(true)
+
+var_dump($areaLanguages->has('api'));
+// bool(false)
 ```
 
 **add**
+
+Adds languages for the given area. If the area already exists, its languages are replaced.
 
 ```php
 use Tobento\Service\Language\LanguageFactory;
@@ -508,6 +513,39 @@ $languages = new Languages(
 );
         
 $areaLanguages->add('frontend', $languages);
+```
+
+**all**
+
+Returns all languages keyed by area.
+
+```php
+use Tobento\Service\Language\LanguagesInterface;
+
+foreach ($areaLanguages->all() as $area => $languages) {
+    var_dump($languages instanceof LanguagesInterface);
+    // bool(true)
+}
+```
+
+**count**
+
+Returns the total number of languages across all areas.
+
+```php
+var_dump($areaLanguages->count());
+// int(5)
+```
+
+**Iterating**
+
+The area languages are iterable and yield the languages keyed by area:
+
+```php
+foreach ($areaLanguages as $area => $languages) {
+    // $area is e.g. 'frontend' or 'backend'
+    // $languages is a LanguagesInterface
+}
 ```
 
 ## Current Language Resolver
