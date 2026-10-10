@@ -13,6 +13,10 @@ declare(strict_types=1);
 
 namespace Tobento\Service\Language;
 
+use ArrayIterator;
+use IteratorAggregate;
+use Traversable;
+
 /**
  * AreaLanguages
  */
@@ -81,5 +85,41 @@ class AreaLanguages implements AreaLanguagesInterface
     {
         $this->languages[$area] = $languages;
         return $this;
+    }
+    
+    /**
+     * Get all languages key by area.
+     *
+     * @return array<string, LanguagesInterface>
+     */
+    public function all(): array
+    {
+        return $this->languages;
+    }
+    
+    /**
+     * Return the total number of languages
+     *
+     * @return int
+     */
+    public function count(): int
+    {
+        $count = 0;
+
+        foreach ($this->languages as $languages) {
+            $count += iterator_count($languages);
+        }
+
+        return $count;
+    }
+    
+    /**
+     * Get iterator.
+     *
+     * @return Traversable<string, LanguagesInterface>
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->all());
     }
 }

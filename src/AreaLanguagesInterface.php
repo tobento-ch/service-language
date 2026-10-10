@@ -13,10 +13,15 @@ declare(strict_types=1);
 
 namespace Tobento\Service\Language;
 
+use Countable;
+use IteratorAggregate;
+
 /**
  * AreaLanguagesInterface
+ *
+ * @extends IteratorAggregate<string, LanguagesInterface>
  */
-interface AreaLanguagesInterface
+interface AreaLanguagesInterface extends Countable, IteratorAggregate
 {
     /**
      * If languages by area exists.
